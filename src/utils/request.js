@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { getToken } from './auth'
+import { Message } from 'element-ui'
 
 const service = axios.create({
   baseURL: 'https://api-hmzs.itheima.net/v1',
@@ -26,7 +27,12 @@ service.interceptors.response.use(
   response => {
     return response.data
   },
+  // 接口错误回调
   error => {
+    Message({
+      type: 'warning',
+      message: error.response.data.msg
+    })
     return Promise.reject(error)
   }
 )
