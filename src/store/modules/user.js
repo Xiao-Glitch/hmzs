@@ -1,5 +1,5 @@
 import { loginAPI } from '@/api/user'
-import { setToken, getToken } from '@/utils/auth'
+import { setToken, getToken, removeToken } from '@/utils/auth'
 export default {
   namespaced: true,
   state: {
@@ -12,6 +12,10 @@ export default {
       state.token = newToken
       // cookie也存入一份
       setToken(newToken)
+    },
+    clearUserInfo(state) {
+      state.token = ''
+      removeToken()
     }
   },
   actions: {

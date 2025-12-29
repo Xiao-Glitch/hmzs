@@ -13,6 +13,8 @@
           <a target="_blank">
             <el-dropdown-item> 项目地址 </el-dropdown-item>
           </a>
+
+          <!--退出登录 二次询问用户 -->
           <el-dropdown-item divided @click.native="logout">
             <span style="display: block">退出登录</span>
           </el-dropdown-item>
@@ -23,11 +25,29 @@
 </template>
 
 <script>
+
 export default {
   methods: {
     // 退出登录
     logout() {
-      this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+      this.$confirm(' 确定要退出吗?, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$message({
+          type: 'success',
+          message: '退出登录成功!'
+        })
+        this.$store.commit('user/clearUserInfo')
+        localStorage.removeItem('remember_key')
+        this.$router.push(`/login`)
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消退出登录'
+        })
+      })
     }
   }
 }
