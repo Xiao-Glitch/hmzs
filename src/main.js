@@ -14,6 +14,9 @@ import store from './store'
 
 import router from './router'
 
+// 添加权限控制初始化
+import './permission'
+
 // 注册svg
 import '@/icons'
 
