@@ -13,6 +13,11 @@ export const routes = [
     hidden: true
   },
   {
+    path: '/addCard',
+    component: () => import('@/views/Car/CarCard/addCard.vue'),
+    hidden: true
+  },
+  {
     path: '/',
     component: Layout,
     redirect: '/workbench'

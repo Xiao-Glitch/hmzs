@@ -64,7 +64,7 @@ export default {
       list: [], // 月卡列表
       params: {
         page: 1,
-        pageSize: 2,
+        pageSize: 5,
         carNumber: '',
         personName: '',
         cardStatus: null
