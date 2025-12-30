@@ -119,7 +119,7 @@ export default {
       this.getList()
     },
     editCrd(id) {
-      console.log(id)
+      // console.log(id)
       this.$router.push({
         path: '/addCard',
         query: {

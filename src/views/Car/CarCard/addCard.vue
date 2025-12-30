@@ -1,7 +1,7 @@
 <template>
   <div class="add-card">
     <header class="add-header">
-      <el-page-header content="增加月卡" @back="$router.back()" />
+      <el-page-header :content="id ? '编辑月卡' : '添加月卡'" @back="$router.back()" />
     </header>
     <main class="add-main">
       <div class="form-container">
@@ -38,7 +38,7 @@
               />
             </el-form-item>
             <el-form-item label="支付金额" prop="paymentAmount">
-              <el-input v-model="feeForm.paymentAmount" />
+              <el-input v-model.number="feeForm.paymentAmount" />
             </el-form-item>
             <el-form-item label="支付方式" prop="paymentMethod">
               <el-select v-model="feeForm.paymentMethod">
@@ -59,7 +59,7 @@
 </template>
 
 <script>
-import { createCardAPI } from '@/api/card'
+import { createCardAPI, getDetailAPI, updateCardAPI } from '@/api/card'
 export default {
   name: 'AddCard',
   data() {
@@ -129,6 +129,17 @@ export default {
       ]
     }
   },
+  computed: {
+    id() {
+      return this.$route.query.id
+    }
+  },
+  mounted() {
+    if (this.id) {
+      console.log(this.id)
+      this.getCardDetail()
+    }
+  },
   methods: {
     confirmAdd() {
       // 俩个表单统一验证
@@ -148,18 +159,42 @@ export default {
                 cardEndDate: this.feeForm.payTime[1]
               }
               delete reqData.payTime
-              console.log('提交成功', reqData)
+              console.log('提交数据', reqData)
               // 调用接口
-              await createCardAPI(reqData)
+              // 根据id判断是添加还是修改
+              if (this.id) {
+                await updateCardAPI(reqData)
+              } else {
+                await createCardAPI(reqData)
+              }
               // 后续处理
               // 提示用户
-              this.$message.success('添加成功')
+              this.$message.success(`${this.id ? '更新成功' : '添加成功'}`)
               // 跳回列表页面
               this.$router.back()
             }
           })
         }
       })
+    },
+    async getCardDetail() {
+      const id = this.$route.query.id
+      const res = await getDetailAPI(id)
+      const { carInfoId, personName, phoneNumber, carNumber, carBrand } = res.data
+      this.carInfoForm = {
+        personName,
+        phoneNumber,
+        carNumber,
+        carBrand,
+        carInfoId
+      }
+      const { rechargeId, cardStartDate, cardEndDate, paymentAmount, paymentMethod } = res.data.rechargeList[0]
+      this.feeForm = {
+        payTime: [cardStartDate, cardEndDate],
+        paymentAmount,
+        paymentMethod,
+        rechargeId
+      }
     }
   }
 }
