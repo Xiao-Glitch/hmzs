@@ -54,3 +54,29 @@ export function createEnterPriseAPI(data) {
     data
   })
 }
+
+/**
+ * 查找企业
+ * @param {*} params
+ * @returns
+ */
+
+export function getEnterPriseDetailAPI(id) {
+  return request({
+    url: `/park/enterprise/${id}`
+  })
+}
+
+/**
+ * 编辑企业
+ * @param {*} data
+ * @returns
+ */
+
+export function updateEnterPriseAPI(data) {
+  return request({
+    url: `/park/enterprise`,
+    method: 'PUT',
+    data
+  })
+}

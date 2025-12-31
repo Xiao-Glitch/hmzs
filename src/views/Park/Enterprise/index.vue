@@ -204,6 +204,14 @@ export default {
     },
     clearSearch() {
       this.getiList()
+    },
+    editEnterprise(id) {
+      this.$router.push({
+        path: '/addEnterprise',
+        query: {
+          id
+        }
+      })
     }
   }
 }

@@ -83,7 +83,7 @@
 </template>
 
 <script>
-import { getIndustryListAPI, uploadAPI, createEnterPriseAPI } from '@/api/park'
+import { getIndustryListAPI, uploadAPI, createEnterPriseAPI, getEnterPriseDetailAPI, updateEnterPriseAPI } from '@/api/park'
 export default {
   name: 'AddEnterprise',
   data() {
@@ -95,7 +95,7 @@ export default {
       }
     }
     return {
-      id: null, // 添加id属性用于标识编辑的记录
+      // id: this.$route.query.id || null, // 1. 添加id属性用于标识编辑的记录
       addForm: {
         name: '', // 企业名称
         legalPerson: '', // 法人
@@ -133,8 +133,17 @@ export default {
       industryList: [] // 行业列表
     }
   },
+
+  computed: {
+    id() {
+      return this.$route.query.id
+    }
+  },
   mounted() {
     // this.getiIndustryList()
+    if (this.id) {
+      this.getDetail()
+    }
   },
   methods: {
     async getiIndustryList() {
@@ -177,14 +186,21 @@ export default {
       this.$refs.ruleForm.validate(async valid => {
         if (valid) {
           // 验证成功
-          await createEnterPriseAPI(this.addForm)
-          this.$message({
-            type: 'success',
-            message: '添加成功'
-          })
+          if (this.id) {
+            // 更新数据
+            const { name, id, legalPerson, registeredAddress, industryCode, businessLicenseUrl, businessLicenseId, contact, contactNumber } = this.addForm
+            await updateEnterPriseAPI({ name, id, legalPerson, registeredAddress, industryCode, businessLicenseUrl, businessLicenseId, contact, contactNumber })
+          } else {
+            await createEnterPriseAPI(this.addForm)
+          }
+          this.$message.success(`${this.id ? '更新成功' : '新增成功'}`)
           this.$router.push('/park/enterprise')
         }
       })
+    },
+    async getDetail() {
+      const res = await getEnterPriseDetailAPI(this.id)
+      this.addForm = res.data
     }
   }
 }
