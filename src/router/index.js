@@ -14,7 +14,12 @@ export const routes = [
   },
   {
     path: '/addCard',
-    component: () => import('@/views/Car/CarCard/addCard.vue'),
+    component: () => import('@/views/Car/CarCard/addCard'),
+    hidden: true
+  },
+  {
+    path: '/addEnterPrise',
+    component: () => import('@/views/Park/Enterprise/AddEnterprise'),
     hidden: true
   },
   {
