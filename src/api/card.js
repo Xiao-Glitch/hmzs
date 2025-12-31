@@ -49,3 +49,27 @@ export function updateCardAPI(data) {
     data
   })
 }
+
+/**
+ * 删除月卡
+ * @param {*} id
+ * @returns
+ */
+export function delCardAPI(id) {
+  return request({
+    url: `/parking/card/${id}`,
+    method: 'DELETE'
+  })
+}
+
+/**
+ * 删除选中月卡
+ * @param {*} ids
+ * @returns
+ */
+export function delAllCardAPI(ids) {
+  return request({
+    url: `/parking/card/${ids}`,
+    method: 'DELETE'
+  })
+}

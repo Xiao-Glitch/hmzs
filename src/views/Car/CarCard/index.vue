@@ -15,7 +15,7 @@
     <!-- 新增删除操作区域 -->
     <div class="create-container">
       <el-button type="primary" @click="$router.push('/addCard')">添加月卡</el-button>
-      <el-button>批量删除</el-button>
+      <el-button @click="delAllCard">批量删除</el-button>
     </div>
     <!-- 表格区域 -->
     <div class="table">
@@ -55,7 +55,7 @@
 </template>
 
 <script>
-import { getCardListAPI } from '@/api/card'
+import { getCardListAPI, delCardAPI, delAllCardAPI } from '@/api/card'
 export default {
   name: 'Card',
   data() {
@@ -127,7 +127,39 @@ export default {
         }
       })
     },
-    handleSelectionChange(value) {}
+    delCard(id) {
+      this.$confirm('确认删除月卡吗, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async() => {
+        await delCardAPI(id)
+        // 更新列表
+        this.getList()
+        this.$message({
+          type: 'success',
+          message: '删除成功!'
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
+    },
+    handleSelectionChange(val) {
+      // 获取选择的id并处理成接口需要的数据
+      this.selectedList = val.map(item => item.id).join(',')
+      console.log(this.selectedList)
+    },
+    async delAllCard() {
+      await delAllCardAPI(this.selectedList)
+      this.getList()
+      this.$message({
+        type: 'success',
+        message: '删除成功!'
+      })
+    }
   }
 }
 </script>
