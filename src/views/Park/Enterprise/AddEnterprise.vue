@@ -83,8 +83,7 @@
 </template>
 
 <script>
-import { getIndustryListAPI, uploadAPI } from '@/api/park'
-import { is } from 'core-js/core/object';
+import { getIndustryListAPI, uploadAPI, createEnterPriseAPI } from '@/api/park'
 export default {
   name: 'AddEnterprise',
   data() {
@@ -96,6 +95,7 @@ export default {
       }
     }
     return {
+      id: null, // 添加id属性用于标识编辑的记录
       addForm: {
         name: '', // 企业名称
         legalPerson: '', // 法人
@@ -144,7 +144,7 @@ export default {
     selectFocus() {
       this.getiIndustryList()
     },
-    upload(res) {
+    async upload(res) {
       // console.log(res)
       const { file } = res
       // 上传文件
@@ -153,8 +153,12 @@ export default {
       fd.append('file', file)
       fd.append('type', 'businessLicense')
       // 调用接口上传文件
-      uploadAPI(fd)
-      console.log('fd', fd)
+      const _res = await uploadAPI(fd)
+      // 上传之后对营业执照id做校验
+      const { id, url } = _res.data
+      this.addForm.businessLicenseId = id
+      this.addForm.businessLicenseUrl = url
+      console.log(this.addForm.businessLicenseId, this.addForm.businessLicenseUrl)
     },
     beforeUpload(file) {
       const isPNG = file.type === 'image/png'
@@ -168,6 +172,19 @@ export default {
         return isLt5M
       }
       return isPNG && isLt5M
+    },
+    confirmAdd() {
+      this.$refs.ruleForm.validate(async valid => {
+        if (valid) {
+          // 验证成功
+          await createEnterPriseAPI(this.addForm)
+          this.$message({
+            type: 'success',
+            message: '添加成功'
+          })
+          this.$router.push('/park/enterprise')
+        }
+      })
     }
   }
 }

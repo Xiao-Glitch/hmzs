@@ -40,3 +40,17 @@ export function uploadAPI(data) {
     data
   })
 }
+
+/**
+ * 创建企业
+ * @param {*} data
+ * @returns
+ */
+
+export function createEnterPriseAPI(data) {
+  return request({
+    url: '/park/enterprise',
+    method: 'POST',
+    data
+  })
+}
