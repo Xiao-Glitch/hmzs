@@ -193,8 +193,16 @@ export default {
       })
       this.total = res.data.total
     },
+    // 分页
     pageChange(page) {
       this.params.page = page
+      this.getiList()
+    },
+    doSearch() {
+      this.params.page = 1
+      this.getiList()
+    },
+    clearSearch() {
       this.getiList()
     }
   }
