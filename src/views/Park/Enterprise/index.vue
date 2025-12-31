@@ -141,7 +141,9 @@
 </template>
 
 <script>
-import { getListAPI } from '@/api/park'
+import { uploadAPI } from '@/api/common'
+import { getListAPI, addRentAPI } from '@/api/park'
+import { getBuildingRentListAPI } from '@/api/building'
 export default {
   name: 'EnterPrise',
   data() {
@@ -150,7 +152,7 @@ export default {
       params: {
         name: '',
         page: 1,
-        pageSize: 2
+        pageSize: 10
       },
       total: 0,
       dialogVisible: false, // 控制弹窗框打开和关闭
@@ -180,6 +182,57 @@ export default {
     this.getiList()
   },
   methods: {
+    confirmAdd() {
+      // 表单校验
+      this.$refs.addForm.validate(valid => {
+        if (valid) {
+          // TODO API
+          // 处理参数
+          const { buildingId, contractId, contractUrl, type, enterpriseId } = this.rentForm
+          const reqData = {
+            buildingId, contractId, contractUrl, type, enterpriseId,
+            startTime: this.rentForm.rentTime[0],
+            endTime: this.rentForm.rentTime[1]
+          }
+          addRentAPI(reqData)
+          // 1. 弹框关闭
+          this.dialogVisible = false
+          // 2. 重置一下数据( resetFileds + 手动清除)
+          this.$refs.addForm.resetFields()
+          this.rentForm = {
+            buildingId: null, // 楼宇id
+            contractId: null, // 合同id
+            contractUrl: '', // 合同Url
+            enterpriseId: null, // 企业名称
+            type: 0, // 合同类型
+            rentTime: [] // 合同时间
+          }
+          this.$refs.uploadRef.clearFiles()
+          // 3. 重新拉取一下列表
+        }
+      })
+      // 调用接口
+    },
+    async upload(res) {
+      // 把file对象存下来
+      const file = res.file
+      // 处理formdata
+      const fd = new FormData()
+      fd.append('file', file)
+      fd.append('type', 'contract')
+      // 调用上传接口
+      const _res = await uploadAPI(fd)
+      // 存入数据
+      this.rentForm.contractId = _res.data.id
+      this.rentForm.contractUrl = _res.data.url
+    },
+    async getBuildingList() {
+      // 用来做table渲染  用来做下拉框渲染  拆分成俩个接口
+      // const res = await getBuildingListAPI({ page: 1, pageSize: 100 })
+      // this.buildingList = res.data.rows
+      const res = await getBuildingRentListAPI()
+      this.buildingList = res.data
+    },
     async getiList() {
       // 接口调用
       const res = await getListAPI(this.params)
@@ -212,6 +265,17 @@ export default {
           id
         }
       })
+    },
+    addRent(id) {
+      this.dialogVisible = true
+
+      this.rentForm.enterpriseId = id
+    },
+    closeDialog() {
+      this.dialogVisible = false
+    },
+    openDialog() {
+      this.getBuildingList()
     }
   }
 }

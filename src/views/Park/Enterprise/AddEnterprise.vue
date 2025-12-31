@@ -83,7 +83,8 @@
 </template>
 
 <script>
-import { getIndustryListAPI, uploadAPI, createEnterPriseAPI, getEnterPriseDetailAPI, updateEnterPriseAPI } from '@/api/park'
+import { uploadAPI } from '@/api/common'
+import { getIndustryListAPI, createEnterPriseAPI, getEnterPriseDetailAPI, updateEnterPriseAPI } from '@/api/park'
 export default {
   name: 'AddEnterprise',
   data() {
@@ -173,11 +174,11 @@ export default {
       const isPNG = file.type === 'image/png'
       const isLt5M = file.size / 1024 / 1024 < 5
       if (!isPNG) {
-        this.$message.error('上传合同文件只能是 PNG 格式')
+        this.$message.error('上传营业执照图片只能是 PNG 格式')
         return isPNG
       }
       if (!isLt5M) {
-        this.$message.error('上传合同文件大小不能超过 5MB!')
+        this.$message.error('上传营业执照图片大小不能超过 5MB!')
         return isLt5M
       }
       return isPNG && isLt5M
