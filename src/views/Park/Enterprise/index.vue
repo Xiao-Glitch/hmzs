@@ -62,7 +62,7 @@
             <el-button size="mini" type="text" @click="addRent(row.id)">添加合同</el-button>
             <el-button size="mini" type="text" @click="lookRent(row.id)">查看</el-button>
             <el-button size="mini" type="text" @click="editEnterprise(row.id)">编辑</el-button>
-            <el-button size="mini" type="text">删除</el-button>
+            <el-button size="mini" type="text" @click="delEnterprise(row.id)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -142,7 +142,7 @@
 
 <script>
 import { uploadAPI } from '@/api/common'
-import { getListAPI, addRentAPI, getRentListAPI, outRentAPI, delRentAPI } from '@/api/park'
+import { getListAPI, addRentAPI, getRentListAPI, outRentAPI, delRentAPI, delEnterPriseAPI } from '@/api/park'
 import { getBuildingRentListAPI } from '@/api/building'
 export default {
   name: 'EnterPrise',
@@ -195,7 +195,8 @@ export default {
             endTime: this.rentForm.rentTime[1]
           }
           const res = await addRentAPI(reqData)
-          res.code === 10000 && this.$message.success('添加成功')
+          console.log(reqData)
+          res.code === 10000 && this.$message.success('添加成功') && window.location.reload()
           // 1. 弹框关闭
           this.dialogVisible = false
           // 2. 重置一下数据( resetFileds + 手动清除)
@@ -251,6 +252,7 @@ export default {
           type: 'success',
           message: '退租成功!'
         })
+        window.location.reload()
       }).catch(() => {
         this.$message({
           type: 'info',
@@ -275,6 +277,30 @@ export default {
           message: '已取消删除'
         })
       })
+    },
+    async delEnterprise(id) {
+      const res = await getRentListAPI(id)
+      if (res.data.length > 0) {
+        return this.$message.error('该企业存在租赁合同，无法删除！')
+      } else {
+        this.$confirm('确认删除该企业吗, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(async() => {
+          await delEnterPriseAPI(id)
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          })
+          this.getiList()
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+      }
     },
     async upload(res) {
       // 把file对象存下来

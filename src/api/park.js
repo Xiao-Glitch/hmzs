@@ -119,3 +119,16 @@ export function delRentAPI(rendId) {
     method: 'DELETE'
   })
 }
+
+/**
+ * 删除企业
+ * @param {*} id
+ * @returns
+ */
+
+export function delEnterPriseAPI(id) {
+  return request({
+    url: `/park/enterprise/${id}`,
+    method: 'DELETE'
+  })
+}
