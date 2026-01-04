@@ -81,3 +81,41 @@ export function addRentAPI(data) {
     data
   })
 }
+
+/**
+ * 获取当前企业合同列表
+ * @param {*} params
+ * @returns
+ */
+
+export function getRentListAPI(id) {
+  return request({
+    url: `/park/enterprise/rent/${id}`,
+    method: 'GET'
+  })
+}
+
+/**
+ *  退租合同
+ * @param {*} rendId
+ * @returns
+ */
+export function outRentAPI(rendId) {
+  return request({
+    url: `/park/enterprise/rent/${rendId}`,
+    method: 'PUT'
+  })
+}
+
+/**
+ * 删除合同
+ * @param {*} rendId
+ * @returns
+ */
+
+export function delRentAPI(rendId) {
+  return request({
+    url: `/park/enterprise/rent/${rendId}`,
+    method: 'DELETE'
+  })
+}

@@ -14,11 +14,11 @@
     </div>
     <div class="create-container">
       <el-button v-btn-auth="'park:enterprise:add_edit'" type="primary" @click="$router.push('/addEnterprise')">添加企业</el-button>
-      <el-button v-btn-auth="'park:enterprise:remove'" type="primary" @click="$router.push('/addEnterprise')">删除企业</el-button>
+      <!-- <el-button v-btn-auth="'park:enterprise:remove'" type="primary" @click="$router.push('/addEnterprise')">删除企业</el-button>
 
       <auth-btn btn-perm="park:enterprise:remove">
         <el-button>添加</el-button>
-      </auth-btn>
+      </auth-btn> -->
     </div>
     <!-- 表格区域 -->
     <div class="table">
@@ -44,7 +44,7 @@
                  -->
                 <template #default="scope">
                   <el-button size="mini" :disabled="scope.row.status === 3" type="text" @click="outRent(scope.row.id)">退租</el-button>
-                  <el-button size="mini" :disabled="scope.row.status !== 3" type="text">删除</el-button>
+                  <el-button size="mini" :disabled="scope.row.status !== 3" type="text" @click="delRent(scope.row.id)">删除</el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -142,7 +142,7 @@
 
 <script>
 import { uploadAPI } from '@/api/common'
-import { getListAPI, addRentAPI } from '@/api/park'
+import { getListAPI, addRentAPI, getRentListAPI, outRentAPI, delRentAPI } from '@/api/park'
 import { getBuildingRentListAPI } from '@/api/building'
 export default {
   name: 'EnterPrise',
@@ -184,7 +184,7 @@ export default {
   methods: {
     confirmAdd() {
       // 表单校验
-      this.$refs.addForm.validate(valid => {
+      this.$refs.addForm.validate(async valid => {
         if (valid) {
           // TODO API
           // 处理参数
@@ -194,7 +194,8 @@ export default {
             startTime: this.rentForm.rentTime[0],
             endTime: this.rentForm.rentTime[1]
           }
-          addRentAPI(reqData)
+          const res = await addRentAPI(reqData)
+          res.code === 10000 && this.$message.success('添加成功')
           // 1. 弹框关闭
           this.dialogVisible = false
           // 2. 重置一下数据( resetFileds + 手动清除)
@@ -212,6 +213,68 @@ export default {
         }
       })
       // 调用接口
+    },
+    lookRent(id) {
+      this.$router.push({
+        path: '/enterpriseDetail',
+        query: {
+          id
+        }
+      })
+    },
+    formatInfoType(status) {
+      const MAP = {
+        0: 'warning',
+        1: 'success',
+        2: 'info',
+        3: 'danger'
+      }
+      return MAP[status] || 'info'
+    },
+    formatStatus(status) {
+      const MAP = {
+        0: '待生效',
+        1: '租赁中',
+        2: '已到期',
+        3: '已退租'
+      }
+      return MAP[status] || '未知状态'
+    },
+    async outRent(id) {
+      this.$confirm('确认退租吗, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async() => {
+        await outRentAPI(id)
+        this.$message({
+          type: 'success',
+          message: '退租成功!'
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消退租'
+        })
+      })
+    },
+    async delRent(id) {
+      this.$confirm('确认删除合同吗, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async() => {
+        await delRentAPI(id)
+        this.$message({
+          type: 'success',
+          message: '删除成功!'
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
     },
     async upload(res) {
       // 把file对象存下来
@@ -241,9 +304,10 @@ export default {
       this.list = res.data.rows.map(item => {
         return {
           ...item,
-          rentList: []
+          rentList: [] // 合同列表
         }
       })
+      console.log(this.list)
       this.total = res.data.total
     },
     // 分页
@@ -265,6 +329,15 @@ export default {
           id
         }
       })
+    },
+    async expandChange(row, rows) {
+      // console.log('展开', row, rows)
+      const item = rows.find(item => item.id === row.id)
+      if (item) {
+        const res = await getRentListAPI(row.id)
+        // eslint-disable-next-line require-atomic-updates
+        row.rentList = res.data
+      }
     },
     addRent(id) {
       this.dialogVisible = true
