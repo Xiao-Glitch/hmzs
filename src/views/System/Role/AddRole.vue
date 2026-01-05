@@ -103,7 +103,7 @@
 </template>
 
 <script>
-import { getTreeListAPI } from '@/api/system'
+import { getTreeListAPI, addRoleAPI } from '@/api/system'
 
 // 递归移除disabled属性
 // function remDiabled(treeList) {
@@ -114,6 +114,7 @@ import { getTreeListAPI } from '@/api/system'
 //     }
 //   })
 // }
+
 export default {
   name: 'AddRole',
   data() {
@@ -180,8 +181,18 @@ export default {
       }
     },
     // 确认添加
-    confirmAdd() {
+    async confirmAdd() {
       // TODO 添加角色逻辑
+      const res = await addRoleAPI({
+        ...this.roleForm,
+        perms: [this.permsList]
+      })
+      // console.log({
+      //   ...this.roleForm,
+      //   perms: [this.permsList]
+      // })
+
+      res.code === 10000 && this.$message.success('角色添加成功') && this.$router.push('/sys/role')
     }
   }
 }
