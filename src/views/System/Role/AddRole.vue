@@ -39,15 +39,17 @@
         <div class="title">权限配置</div>
         <div class="form">
           <div class="tree-wrapper">
-            <div class="tree-item">
-              <div class="tree-title">{{ }}</div>
+            <div v-for="item in treeList" :key="item.id" class="tree-item">
+              <div class="tree-title">{{ item.title }}</div>
               <el-tree
                 ref="tree"
+                :data="item.children"
                 show-checkbox
                 default-expand-all
                 node-key="id"
                 highlight-current
                 check-strictly
+                :props="{ label: 'title', disabled:()=> false }"
               />
             </div>
           </div>
@@ -57,12 +59,12 @@
         <div class="title">检查并完成</div>
         <div class="form">
           <div class="info">
-            <div class="form-item">角色名称：{{ }}</div>
-            <div class="form-item">角色描述：{{ }}</div>
+            <div class="form-item">角色名称：{{ roleForm.roleName }}</div>
+            <div class="form-item">角色描述：{{ roleForm.remark }}</div>
             <div class="form-item">角色权限：</div>
             <div class="tree-wrapper">
-              <div class="tree-item">
-                <div class="tree-title">{{ }}</div>
+              <div v-for="item in treeList" :key="item.id" class="tree-item">
+                <div class="tree-title">{{ item.title }}</div>
                 <!--
                   在内部通过遍历数组生成每一个树节点的时候 检测当前props选项中
                   是否传入了一个配置项 叫做disabled 如果传入了 调用这个方法拿到它的返回值
@@ -72,10 +74,13 @@
                  -->
                 <el-tree
                   ref="diabledTree"
+                  :data="item.children"
                   show-checkbox
                   default-expand-all
                   check-strictly
                   node-key="id"
+                  :highlight-current="false"
+                  :props="{label: 'title', disabled: ()=> true}"
                 />
               </div>
             </div>
@@ -98,6 +103,17 @@
 </template>
 
 <script>
+import { getTreeListAPI } from '@/api/system'
+
+// 递归移除disabled属性
+// function remDiabled(treeList) {
+//   treeList.forEach(item => {
+//     item.disabled = false
+//     if (item.children) {
+//       remDiabled(item.children)
+//     }
+//   })
+// }
 export default {
   name: 'AddRole',
   data() {
@@ -113,23 +129,54 @@ export default {
         ]
       },
       treeList: [], // 权限树数据
+      permsList: [], // 选择的权限列表
       disableTreeList: [] // 禁用的权限树数据
     }
   },
+  mounted() {
+    this.getTreeList()
+  },
   methods: {
+    async getTreeList() {
+      const res = await getTreeListAPI()
+      this.treeList = res.data
+    },
     // 上一步
     prev() {
+      // if (this.currentActive > 1) {
+      //   回到权限配置步骤时 需要把树上的禁用状态移除
+      //   remDiabled(this.treeList)
+      // }
       this.currentActive--
     },
     // 下一步
     next() {
-      this.currentActive++
       if (this.currentActive === 1) {
         this.$refs.infoForm.validate(valid => {
           if (valid) {
             this.currentActive++
           }
         })
+      } else if (this.currentActive === 2) {
+        // 选择权限信息的状态
+        // 目标：判断用户至少选择了一项
+        // 思路：获取到用户选择了什么
+        this.permsList = []
+        this.$refs.tree.forEach(treeInstance => {
+          const keys = treeInstance.getCheckedKeys()
+          // console.log(keys)
+          this.permsList.push(...keys)
+          // console.log(this.treeList)
+        })
+        if (this.permsList.length === 0) {
+          return this.$message.warning('请选择权限')
+        } else {
+          this.currentActive++
+          // 回显禁用的树
+          this.$refs.diabledTree.forEach((treeInstance, index) => {
+            treeInstance.setCheckedKeys(this.permsList)
+          })
+        }
       }
     },
     // 确认添加
