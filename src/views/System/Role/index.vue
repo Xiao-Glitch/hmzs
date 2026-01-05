@@ -7,7 +7,15 @@
           {{ item.roleName }}
         </div>
         <div class="more">
-          <svg-icon icon-class="more" />
+          <el-dropdown>
+            <span class="el-dropdown-link">
+              <svg-icon icon-class="more" />
+            </span>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item @click.native="editRole(item.roleId)">编辑角色</el-dropdown-item>
+              <el-dropdown-item>删除</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
         </div>
       </div>
       <el-button class="addBtn" size="mini" @click="$router.push('/sys/role/addRole')">添加角色</el-button>
@@ -79,6 +87,12 @@ export default {
     this.switchTab(0)
   },
   methods: {
+    editRole(roleId) {
+      this.$router.push({
+        path: '/sys/role/addRole',
+        query: { roleId }
+      })
+    },
     async highLightPerms(roleId) {
       const res = await getRoleDetailAPI(roleId)
       const perms = res.data.perms
@@ -94,14 +108,16 @@ export default {
       this.roleUserList = resMemeber.data.rows
     },
     async switchTab(idx) {
-      this.currentIndex = idx
-      // 拿到当前的角色id
-      const roleId = this.roleList[idx].roleId
-      // 使用id获取高亮权限点的列表
-      await this.highLightPerms(roleId)
+      if (this.currentIndex !== idx) {
+        this.currentIndex = idx
+        // 拿到当前的角色id
+        const roleId = this.roleList[idx].roleId
+        // 使用id获取高亮权限点的列表
+        await this.highLightPerms(roleId)
 
-      // 拿到当前角色的成员列表
-      await this.getUserMember(roleId)
+        // 拿到当前角色的成员列表
+        await this.getUserMember(roleId)
+      }
     },
     async getRoleList() {
       const res = await getRoleListAPI()

@@ -4,7 +4,7 @@
       <div class="left">
         <span class="arrow" @click="$router.back()"><i class="el-icon-arrow-left" />返回</span>
         <span>|</span>
-        <span>添加角色</span>
+        <span>{{ id ? '编辑角色' : '添加角色' }}</span>
       </div>
       <div class="right">
         黑马程序员
@@ -103,7 +103,7 @@
 </template>
 
 <script>
-import { getTreeListAPI, addRoleAPI } from '@/api/system'
+import { getTreeListAPI, addRoleAPI, getRoleDetailAPI, editRoleAPI } from '@/api/system'
 
 // 递归移除disabled属性
 // function remDiabled(treeList) {
@@ -134,10 +134,32 @@ export default {
       disableTreeList: [] // 禁用的权限树数据
     }
   },
+  computed: {
+    id() {
+      return this.$route.query.roleId
+    }
+  },
   mounted() {
     this.getTreeList()
+    if (this.id) {
+      this.getRoleDetail()
+    }
   },
   methods: {
+    async getRoleDetail() {
+      const res = await getRoleDetailAPI(this.id)
+      console.log(res)
+      const { perms, roleName, remark } = res.data
+      this.roleForm = { roleName, remark }
+      // 回填权限
+      this.$nextTick(() => {
+        if (this.$refs.tree && this.$refs.tree.length) {
+          this.$refs.tree.forEach((treeInstance, index) => {
+            treeInstance.setCheckedKeys(perms[index])
+          })
+        }
+      })
+    },
     async getTreeList() {
       const res = await getTreeListAPI()
       this.treeList = res.data
@@ -182,17 +204,26 @@ export default {
     },
     // 确认添加
     async confirmAdd() {
-      // TODO 添加角色逻辑
-      const res = await addRoleAPI({
-        ...this.roleForm,
-        perms: [this.permsList]
-      })
-      // console.log({
-      //   ...this.roleForm,
-      //   perms: [this.permsList]
-      // })
+      if (this.id) {
+        // TODO 编辑角色逻辑
+        await editRoleAPI({
+          roleId: this.id,
+          ...this.roleForm,
+          perms: [this.permsList]
+        })
+      } else {
+        // TODO 添加角色逻辑
+        await addRoleAPI({
+          ...this.roleForm,
+          perms: [this.permsList]
+        })
+        // console.log({
+        //   ...this.roleForm,
+        //   perms: [this.permsList]
+        // })
+      }
 
-      res.code === 10000 && this.$message.success('角色添加成功') && this.$router.push('/sys/role')
+      this.$message.success(`${this.id ? '角色组编辑成功' : '角色组添加成功'}`) && this.$router.push('/sys/role')
     }
   }
 }

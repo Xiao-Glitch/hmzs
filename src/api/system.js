@@ -59,3 +59,16 @@ export function addRoleAPI(data) {
     data
   })
 }
+
+/**
+ * 编辑角色
+ * @param {*} data
+ * @returns
+ */
+export function editRoleAPI(data) {
+  return request({
+    url: '/park/sys/role',
+    method: 'PUT',
+    data
+  })
+}
