@@ -28,6 +28,11 @@ export const routes = [
     hidden: true
   },
   {
+    path: '/sys/role/addRole',
+    component: () => import('@/views/System/Role/AddRole'),
+    hidden: true
+  },
+  {
     path: '/',
     component: Layout,
     redirect: '/workbench'
