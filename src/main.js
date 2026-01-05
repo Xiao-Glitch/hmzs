@@ -14,6 +14,9 @@ import store from './store'
 
 import router from './router'
 
+// 注册自己的插件
+import componentPlugin from '@/components'
+Vue.use(componentPlugin)
 // 添加权限控制初始化
 import './permission'
 
