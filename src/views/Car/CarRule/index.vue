@@ -68,20 +68,28 @@ export default {
       this.params.page = page
       this.getList()
     },
-    exportExcel() {
-      // 导出Excel逻辑
+    // 导出Excel逻辑
+    async exportExcel() {
       // 创建一个新的工作簿
       const workbook = utils.book_new()
-      // 创建一个工作表 要求一个对象数组格式
-      const worksheet = utils.json_to_sheet([
-        { 计费规则编号: 'R001', 计费规则名称: '规则一', 免费时长: 30, 收费上线: 10, 计费方式: '按小时计费', 计费规则: '首小时5元，后续每小时3元' },
-        { 计费规则编号: 'R002', 计费规则名称: '规则二', 免费时长: 15, 收费上线: 8, 计费方式: '按半小时计费', 计费规则: '首半小时3元，后续每半小时2元' }
-      ])
+      // 获取当前要导出的table数据
+      const res = await getRuleListAPI(this.params)
+      // 创建一个工作表 要求一个对象数组格式 按照需求调整数据的顺序
+      const tableHeaderKeys = ['ruleNumber', 'ruleName', 'freeDuration', 'chargeCeiling', 'chargeType', 'ruleNameView']
+      const tableHeaderValues = ['计费规则编号', '计费规则名称', '免费时长(分钟)', '收费上线(元)', '计费方式', '计费规则']
+      const sheetData = res.data.rows.map(item => {
+        const newObj = {} // 存放正确的顺序的key-value
+        tableHeaderKeys.forEach(key => {
+          newObj[key] = item[key]
+        })
+        return newObj
+      })
+      const worksheet = utils.json_to_sheet(sheetData)
 
       // 把工作表添加到工作簿中  Data为工作表名称
       utils.book_append_sheet(workbook, worksheet, '规则列表')
       // 改写表头
-      utils.sheet_add_aoa(worksheet, [['计费规则编号', '计费规则名称', '免费时长(分钟)', '收费上线(元)', '计费方式', '计费规则']], { origin: 'A1' })
+      utils.sheet_add_aoa(worksheet, [tableHeaderValues], { origin: 'A1' })
       // 导出Excel文件
       writeFileXLSX(workbook, '停车计费规则.xlsx')
     }
