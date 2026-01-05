@@ -17,8 +17,12 @@
         <div v-for="item in treeList" :key="item.id" class="tree-item">
           <div class="tree-title"> {{ item.title }} </div>
           <el-tree
+            ref="tree"
             :data="item.children"
             :props="defaultProps"
+            :show-checkbox="true"
+            default-expand-all
+            node-key="id"
           />
         </div>
       </div>
@@ -27,7 +31,17 @@
 </template>
 
 <script>
-import { getRoleListAPI, getTreeListAPI } from '@/api/system'
+import { getRoleListAPI, getTreeListAPI, getRoleDetailAPI } from '@/api/system'
+
+// 递归添加disabled属性
+function addDiabled(treeList) {
+  treeList.forEach(item => {
+    item.disabled = true
+    if (item.children) {
+      addDiabled(item.children)
+    }
+  })
+}
 export default {
   name: 'Role',
   data() {
@@ -41,13 +55,26 @@ export default {
       }
     }
   },
-  mounted() {
-    this.getRoleList()
-    this.getTreeList()
+  async mounted() {
+    await this.getRoleList()
+    await this.getTreeList()
+    // 组件初始化默认高亮
+    // this.roleList && treeList 都不为空
+    this.switchTab(0)
   },
   methods: {
-    switchTab(idx) {
+    async switchTab(idx) {
       this.currentIndex = idx
+      // 拿到当前的角色id
+      const roleId = this.roleList[idx].roleId
+      // 使用id获取高亮权限点的列表
+      const res = await getRoleDetailAPI(roleId)
+      const perms = res.data.perms
+      // console.log(this.$refs.tree)
+      // 变量tree实例组成的数据 分别调用他身上的高亮方法 闯入需要高亮的权限点数据
+      this.$refs.tree.forEach((treeInstance, index) => {
+        treeInstance.setCheckedKeys(perms[index])
+      })
     },
     async getRoleList() {
       const res = await getRoleListAPI()
@@ -57,7 +84,8 @@ export default {
     async getTreeList() {
       const res = await getTreeListAPI()
       this.treeList = res.data
-      console.log('treeList', this.treeList)
+      addDiabled(this.treeList)
+      // console.log('treeList', this.treeList)
     }
   }
 }
