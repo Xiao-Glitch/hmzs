@@ -72,3 +72,43 @@ export function editRoleAPI(data) {
     data
   })
 }
+
+/**
+ * 获取员工列表
+ * @param { page, pageSize} params
+ * @returns
+ */
+
+export function getEmployeeListAPI(params) {
+  return request({
+    url: '/park/sys/user',
+    params
+  })
+}
+
+/**
+ * 添加员工
+ * @param {*} data
+ * @returns
+ */
+
+export function createEmployeeAPI(data) {
+  return request({
+    url: '/park/sys/user',
+    method: 'POST',
+    data
+  })
+}
+
+/**
+ * 删除员工
+ * @param {*} id
+ * @returns
+ */
+
+export function delEmployeeAPI(id) {
+  return request({
+    url: `/park/sys/user/${id}`,
+    method: 'DELETE'
+  })
+}
