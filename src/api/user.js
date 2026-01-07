@@ -40,3 +40,16 @@ export function delEnterPriseAPI(id) {
     method: 'DELETE'
   })
 }
+
+/**
+ * @description: 获取用户信息
+ * @param {*} data {}
+ * @returns promise
+ */
+
+export function getProfileAPI() {
+  return request({
+    url: '/park/user/profile',
+    method: 'GET'
+  })
+}

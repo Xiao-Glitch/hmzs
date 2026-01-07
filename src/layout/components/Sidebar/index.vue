@@ -29,7 +29,10 @@ export default {
   computed: {
     routes() {
       // 内置的属性 拿到的是路由初始化的时候传routers配置项中的数组
-      return this.$router.options.routes
+      // permissions.js 拿到最终路由表 存入vuex
+      // 把当前位置得静态路由表改成具有响应式特性的Vuex中的数据
+      // return this.$router.options.routes
+      return this.$store.state.menu.menuList
     },
     activeMenu() {
       const route = this.$route
