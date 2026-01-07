@@ -16,6 +16,7 @@ export default {
     },
     clearUserInfo(state) {
       state.token = ''
+      state.userProfile = {}
       removeToken()
     },
     setProfile(state, userInfo) {

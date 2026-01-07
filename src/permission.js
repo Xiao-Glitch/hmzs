@@ -52,20 +52,30 @@ router.beforeEach(async(to, from, next) => {
     const perms = await store.dispatch('user/getProfile')
     // 把后端的权限数组格式化
     // console.log(perms)
-    const firstRoutePerms = getFirstRoutePerms(perms)
-    console.log(firstRoutePerms)
-    const secondRoutePerms = getSecondRoutePerms(perms)
-    console.log(secondRoutePerms)
-    // 根据权限标识 过滤筛选 动态路由表
-    // console.log(getRoutes(firstRoutePerms, secondRoutePerms, asyncRoutes))
-    const routes = getRoutes(firstRoutePerms, secondRoutePerms, asyncRoutes)
-    routes.forEach(route => {
-      router.addRoute(route)
-    })
-    // 调用mutation函数存储路由表
-    store.commit('menu/setMenulist', routes)
-    // 最终路由表数据
-    console.log(routes)
+
+    // 通过判断超级管理员 直接放行全部权限
+    if (perms[0] === '*:*:*') {
+      asyncRoutes.forEach(route => {
+        router.addRoute(route)
+      })
+      store.commit('menu/setMenulist', asyncRoutes)
+      console.log(asyncRoutes)
+    } else {
+      const firstRoutePerms = getFirstRoutePerms(perms)
+      console.log(firstRoutePerms)
+      const secondRoutePerms = getSecondRoutePerms(perms)
+      console.log(secondRoutePerms)
+      // 根据权限标识 过滤筛选 动态路由表
+      // console.log(getRoutes(firstRoutePerms, secondRoutePerms, asyncRoutes))
+      const routes = getRoutes(firstRoutePerms, secondRoutePerms, asyncRoutes)
+      routes.forEach(route => {
+        router.addRoute(route)
+      })
+      // 调用mutation函数存储路由表
+      store.commit('menu/setMenulist', routes)
+      // 最终路由表数据
+      console.log(routes)
+    }
   } else {
     // 没token
     // 是否在白名单内 - 是否在数组中能找到 - path -to.path

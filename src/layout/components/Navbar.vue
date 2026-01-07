@@ -40,11 +40,12 @@ export default {
           message: '退出登录成功!'
         })
         this.$store.commit('user/clearUserInfo')
-        localStorage.removeItem('remember_key')
-        this.$router.push(`/login`)
+        // localStorage.removeItem('remember_key')
+        this.$store.commit('menu/resetRouter')
+        this.$router.push('/login')
       }).catch(() => {
         this.$message({
-          type: 'info',
+          type: 'error',
           message: '已取消退出登录'
         })
       })
