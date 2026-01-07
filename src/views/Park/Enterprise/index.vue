@@ -14,11 +14,11 @@
     </div>
     <div class="create-container">
       <el-button v-btn-auth="'park:enterprise:add_edit'" type="primary" @click="$router.push('/addEnterprise')">添加企业</el-button>
-      <!-- <el-button v-btn-auth="'park:enterprise:remove'" type="primary" @click="$router.push('/addEnterprise')">删除企业</el-button>
+      <el-button v-btn-auth="'park:enterprise:remove'" type="primary" @click="$router.push('/addEnterprise')">删除企业</el-button>
 
       <auth-btn btn-perm="park:enterprise:remove">
         <el-button>添加</el-button>
-      </auth-btn> -->
+      </auth-btn>
     </div>
     <!-- 表格区域 -->
     <div class="table">

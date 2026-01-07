@@ -20,6 +20,8 @@ Vue.use(componentPlugin)
 // 添加权限控制初始化
 import './permission'
 
+// 执行全局指令注册
+import './directive'
 // 注册svg
 import '@/icons'
 
