@@ -1,7 +1,7 @@
 <template>
   <div class="building-container">
     <!-- 搜索区域 -->
-    <div class="search-container">
+    <div v-btn-auth="'park:enterprise:list'" class="search-container">
       <div class="search-label">企业名称：</div>
       <!--
         分页 页数位于子组件内部 父组件如果想要用 子传父去获取 @current-change='pageChange'
@@ -10,18 +10,18 @@
         子传父的本质: 子组件通过调用父组件中的某个方法 通知它做个事儿
        -->
       <el-input v-model="params.name" clearable placeholder="请输入内容" class="search-main" @clear="clearSearch" />
-      <el-button type="primary" @click="doSearch">查询</el-button>
+      <el-button v-btn-auth="'park:enterprise:query'" type="primary" @click="doSearch">查询</el-button>
     </div>
     <div class="create-container">
       <el-button v-btn-auth="'park:enterprise:add_edit'" type="primary" @click="$router.push('/addEnterprise')">添加企业</el-button>
-      <el-button v-btn-auth="'park:enterprise:remove'" type="primary" @click="$router.push('/addEnterprise')">删除企业</el-button>
+      <!-- <el-button v-btn-auth="'park:enterprise:remove'" type="primary" @click="$router.push('/addEnterprise')">删除企业</el-button>
 
       <auth-btn btn-perm="park:enterprise:remove">
         <el-button>添加</el-button>
-      </auth-btn>
+      </auth-btn> -->
     </div>
     <!-- 表格区域 -->
-    <div class="table">
+    <div v-btn-auth="'park:enterprise:list'" class="table">
       <el-table style="width: 100%" :data="list" @expand-change="expandChange">
         <el-table-column type="expand">
           <template #default="{row}">
@@ -61,7 +61,7 @@
           <template #default="{row}">
             <el-button size="mini" type="text" @click="addRent(row.id)">添加合同</el-button>
             <el-button size="mini" type="text" @click="lookRent(row.id)">查看</el-button>
-            <el-button size="mini" type="text" @click="editEnterprise(row.id)">编辑</el-button>
+            <el-button v-btn-auth="'park:enterprise:remove'" size="mini" type="text" @click="editEnterprise(row.id)">编辑</el-button>
             <el-button size="mini" type="text" @click="delEnterprise(row.id)">删除</el-button>
           </template>
         </el-table-column>
@@ -72,7 +72,7 @@
       1. 页数分出来  页数 = 总数 / 每页条数  total  pageSize
       2. 点击页数获取数据  @current-change="pageChange"  page 请求数据
      -->
-    <div class="page-container">
+    <div v-btn-auth="'park:enterprise:list'" class="page-container">
       <el-pagination
         layout="total, prev, pager, next"
         :total="total"

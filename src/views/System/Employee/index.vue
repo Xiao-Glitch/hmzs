@@ -1,16 +1,16 @@
 <template>
   <div class="employee-container">
     <!-- 搜索区域 -->
-    <div class="search-container">
+    <div v-btn-auth="'sys:user:list'" class="search-container">
       <div class="search-label">员工姓名：</div>
       <el-input v-model="params.name" clearable placeholder="请输入内容" class="search-main" />
       <el-button type="primary">查询</el-button>
     </div>
     <div class="create-container">
-      <el-button type="primary" @click="addEmployee">添加员工</el-button>
+      <el-button v-btn-auth="'sys:user:add_edit'" type="primary" @click="addEmployee">添加员工</el-button>
     </div>
     <!-- 表格区域 -->
-    <div class="table">
+    <div v-btn-auth="'sys:user:list'" class="table">
       <el-table style="width: 100%" :data="employeeList">
         <el-table-column type="index" label="序号" />
         <el-table-column label="员工姓名" width="180" prop="name" />
@@ -25,14 +25,14 @@
         <el-table-column label="添加时间" prop="createTime" width="180" />
         <el-table-column label="操作" fixed="right" width="180">
           <template #default="scope">
-            <el-button size="mini" type="text">编辑</el-button>
-            <el-button size="mini" type="text" @click="delEmployee(scope.row.id)">删除</el-button>
-            <el-button size="mini" type="text">重置密码</el-button>
+            <el-button v-btn-auth="'sys:user:add_edit'" size="mini" type="text">编辑</el-button>
+            <el-button v-btn-auth="'sys:user:remove'" size="mini" type="text" @click="delEmployee(scope.row.id)">删除</el-button>
+            <el-button v-btn-auth="'sys:user:resetPwd'" size="mini" type="text">重置密码</el-button>
           </template>
         </el-table-column>
       </el-table>
     </div>
-    <div class="page-container">
+    <div v-btn-auth="'sys:user:list'" class="page-container">
       <el-pagination
         layout="total, prev, pager, next"
         :page-size="params.pageSize"

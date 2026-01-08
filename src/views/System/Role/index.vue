@@ -12,15 +12,15 @@
               <svg-icon icon-class="more" />
             </span>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item @click.native="editRole(item.roleId)">编辑角色</el-dropdown-item>
-              <el-dropdown-item>删除</el-dropdown-item>
+              <el-dropdown-item v-btn-auth="'sys:role:add_edit'" @click.native="editRole(item.roleId)">编辑角色</el-dropdown-item>
+              <el-dropdown-item v-btn-auth="'sys:role:remove'">删除</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </div>
       </div>
-      <el-button class="addBtn" size="mini" @click="$router.push('/sys/role/addRole')">添加角色</el-button>
+      <el-button v-btn-auth="'sys:role:add_edit'" class="addBtn" size="mini" @click="$router.push('/sys/role/addRole')">添加角色</el-button>
     </div>
-    <div class="right-wrapper">
+    <div v-btn-auth="'sys:role:list'" class="right-wrapper">
       <el-tabs v-model="activName">
         <el-tab-pane label="功能权限" name="first">
           <div class="tree-wrapper">

@@ -32,8 +32,23 @@ export default {
     },
     async getProfile(ctx) {
       const res = await getProfileAPI()
-      ctx.commit('setProfile', res.data)
-      return res.data.permissions
+      if (res.data.permissions[0] === '*:*:*') {
+        const { id, name, menus, roleId, roleName } = res.data
+        const permissions = ['parking:rule:remove', 'sys:role:remove', 'parking:area:list', 'sys:role:add_edit', 'sys:user:add_edit', 'property:propertyFee:add', 'pole:warning:remove', 'park:enterprise:remove', 'park:enterprise:query', 'parking:card:list', 'park:enterprise:add_edit', 'sys:role:list', 'property:propertyFee:remove', 'sys:user:remove', 'parking:card:add_edit', 'parking:area:remove', 'pole:info:add_edit', 'sys:user:resetPwd', 'parking:rule:list', 'parking:card:recharge', 'sys:user:list', 'parking:rule:add_edit', 'pole:info:remove', 'park:building:add_edit', 'park:rent:remove', 'pole:warning:list', 'pole:warning:query', 'parking:area:add_edit', 'pole:info:list', 'park:enterprise:list', 'park:building:remove', 'park:building:list', 'parking:card:remove', 'pole:warning:send', 'parking:payment:list', 'parking:card:query', 'property:propertyFee:query', 'park:rent:add_surrender']
+        const adminData = {
+          id,
+          name,
+          permissions,
+          menus,
+          roleId,
+          roleName
+        }
+        ctx.commit('setProfile', adminData)
+        return permissions
+      } else {
+        ctx.commit('setProfile', res.data)
+        return res.data.permissions
+      }
     }
   }
 }

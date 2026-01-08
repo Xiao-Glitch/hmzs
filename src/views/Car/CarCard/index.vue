@@ -1,7 +1,7 @@
 <template>
   <div class="card-container">
     <!-- 搜索区域 -->
-    <div class="search-container">
+    <div v-btn-auth="'parking:card:query'" class="search-container">
       <span class="search-label">车牌号码: </span>
       <el-input v-model="params.carNumber" clearable placeholder="请输入内容" class="search-main" />
       <span class="search-label">车主姓名: </span>
@@ -14,11 +14,11 @@
     </div>
     <!-- 新增删除操作区域 -->
     <div class="create-container">
-      <el-button type="primary" @click="$router.push('/addCard')">添加月卡</el-button>
-      <el-button @click="delAllCard">批量删除</el-button>
+      <el-button v-btn-auth="'parking:card:add_edit'" type="primary" @click="$router.push('/addCard')">添加月卡</el-button>
+      <el-button v-btn-auth="'parking:card:remove'" @click="delAllCard">批量删除</el-button>
     </div>
     <!-- 表格区域 -->
-    <div class="table">
+    <div v-btn-auth="'parking:card:list'" class="table">
       <el-table style="width: 100%;" :data="list" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" />
         <el-table-column type="index" label="序号" />
@@ -30,22 +30,22 @@
         <el-table-column label="状态" prop="cardStatus" :formatter="formatStatus" />
         <el-table-column label="操作" fixed="right" width="180">
           <template #default="scope">
-            <el-button size="mini" type="text">续费</el-button>
+            <el-button v-btn-auth="'parking:card:add_edit'" size="mini" type="text">续费</el-button>
             <el-button size="mini" type="text">查看</el-button>
-            <el-button size="mini" type="text" @click="editCrd(scope.row.id)">编辑</el-button>
-            <el-button size="mini" type="text" @click="delCard(scope.row.id)">删除</el-button>
+            <el-button v-btn-auth="'parking:rule:add_edit'" size="mini" type="text" @click="editCrd(scope.row.id)">编辑</el-button>
+            <el-button v-btn-auth="'parking:rule:remove'" size="mini" type="text" @click="delCard(scope.row.id)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
     </div>
     <!-- 分页器 -->
-    <div class="page-container">
+    <div v-btn-auth="'parking:card:list'" class="page-container">
       <el-pagination layout="total, prev, pager, next" :page-size="params.pageSize" :total="total" @current-change="currentChange" />
     </div>
     <!-- 弹窗添加楼宇 -->
     <!-- <el-dialog title="添加楼宇" width="580px"> -->
-      <!-- 表单接口 -->
-      <!-- <div class="form-container"></div>
+    <!-- 表单接口 -->
+    <!-- <div class="form-container"></div>
       <template #footer>
         <el-button size="mini">取 消</el-button>
         <el-button size="mini" type="primary">确 定</el-button>

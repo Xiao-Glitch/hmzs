@@ -14,7 +14,7 @@ Vue.directive('btn-auth', {
     // 判断当前按钮的权限标识是否在perms中能找到 if 找到 显示 else 隐藏
     const btnPerm = binding.value
     const userPermissions = store.state.user.userProfile.permissions
-    console.log(btnPerm, userPermissions)
+    // console.log(btnPerm, userPermissions)
     if (!userPermissions.includes(btnPerm)) {
       el.remove()
     }
