@@ -19,6 +19,7 @@
         </el-table-column>
         <el-table-column label="计费规则" prop="ruleNameView" />
         <el-table-column label="操作" fixed="right" width="120">
+          <!-- eslint-disable-next-line vue/no-unused-vars -->
           <template #default="scope">
             <el-button v-btn-auth="'parking:rule:add_edit'" size="mini" type="text">编辑</el-button>
             <el-button v-btn-auth="'parking:rule:remove'" size="mini" type="text">删除</el-button>
