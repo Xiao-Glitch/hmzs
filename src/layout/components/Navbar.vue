@@ -3,8 +3,9 @@
     <div class="right-menu">
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
+          <el-button class="open-sceen" @click="$router.push('/big-screen')">可视化大屏</el-button>
           <!-- 用户名称 -->
-          <span class="name">黑马管理员</span>
+          <span class="name" size="mini">黑马管理员</span>
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
           <router-link to="/">
@@ -134,8 +135,15 @@ export default {
       .avatar-wrapper {
         margin-top: 5px;
         position: relative;
+        .open-sceen {
+          margin-right: 22px;
+          color: #4770FF;
+          border: 1px solid #4770FF;
+          background-color: #fff;
+        }
         .name{
-          font-weight: 600;
+          font-weight: 700;
+          color: black;
           cursor: pointer;
         }
       }

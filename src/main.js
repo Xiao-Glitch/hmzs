@@ -28,6 +28,9 @@ import '@/icons'
 // 全局注册elementUI
 Vue.use(ElementUI)
 
+// 导入qiankun配置
+import './registerMicroApp'
+
 Vue.config.productionTip = false
 
 // vue实例化
