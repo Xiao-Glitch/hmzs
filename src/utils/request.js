@@ -25,7 +25,14 @@ service.interceptors.request.use(
 // 响应拦截器
 service.interceptors.response.use(
   response => {
-    return response.data
+    if (response.data.code === 50000) {
+      return Message({
+        type: 'warning',
+        message: response.data.msg
+      })
+    } else {
+      return response.data
+    }
   },
   // 接口错误回调
   error => {
