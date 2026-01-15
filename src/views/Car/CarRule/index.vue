@@ -1,7 +1,7 @@
 <template>
   <div class="rule-container">
     <div v-btn-auth="'parking:rule:list'" class="create-container">
-      <el-button type="primary">增加停车计费规则</el-button>
+      <el-button type="primary" @click="addRule">增加停车计费规则</el-button>
       <el-button @click="exportExcel">导出Excel</el-button>
     </div>
     <!-- 表格区域 -->
@@ -27,13 +27,51 @@
         </el-table-column>
       </el-table>
       <!-- 分类 -->
-      <el-pagination
-        layout="prev, pager, next"
-        :total="total"
-        :page-size="params.pageSize"
-        @current-change="pageChange"
-      />
+      <el-pagination layout="prev, pager, next" :total="total" :page-size="params.pageSize"
+        @current-change="pageChange" />
     </div>
+    <el-dialog title="添加楼宇" :visible=0 width="880px" @close="closeDialog" @open="openDialog">
+      <!-- 表单接口 -->
+      <div class="form-container">
+        <el-form ref="addForm" :model="addForm" :rules="addFormRule" label-width="120px">
+          <el-form-item label="计费规则编号" prop="name">
+            <el-input placeholder="请输入计费规则编号" v-model="addForm.name" />
+          </el-form-item>
+          <el-form-item label="计费规则名称" prop="floors">
+            <el-input placeholder="请输入计费规则名称" v-model="addForm.floors" />
+          </el-form-item>
+          <el-form-item label="计费方式（全天收费）" prop="area">
+            <el-radio v-model="radio" border label="1">时长</el-radio>
+            <el-radio v-model="radio" border label="2">按次</el-radio>
+            <el-radio v-model="radio" border label="3">分段</el-radio>
+          </el-form-item>
+          <div style="display: flex;">
+            <el-form-item label="免费时长">
+              <el-input-number v-model="num" placeholder="请输入免费时长" controls-position="right" @change="handleChange"
+                :max="10"></el-input-number>
+            </el-form-item>
+            <el-form-item label="收费上限">
+              <el-input placeholder="请输入收费上限" />
+            </el-form-item>
+          </div>
+          <div style="display: flex;">
+          <el-form-item label="计费规则" prop="propertyFeePrice">
+              <el-input-number style="width: 85px;" v-model="num" placeholder="请输入" controls-position="right" @change="handleChange"
+              :max="10"></el-input-number>
+            <el-select style="width: 160px; margin: 0 12px;" v-model="value" placeholder="请选择">
+              <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+              </el-option>
+            </el-select>
+            <el-input style="width: 45px;" v-model="num" placeholder="请输入" />
+          </el-form-item>
+        </div>
+        </el-form>
+      </div>
+      <template #footer>
+        <el-button size="mini" @click="dialogVisible = false">取 消</el-button>
+        <el-button size="mini" type="primary" @click="confirmAdd">确 定</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -50,9 +88,37 @@ export default {
         page: 1,
         pageSize: 2
       },
+      num: Number,
       // 规则总数
       total: 0,
-      dialogVisible: false
+      dialogVisible: false,
+      addForm: {
+        ruleNumber: '',
+        ruleName: '',
+        freeDuration: '',
+        chargeType: '',
+        durationPrice: 0,
+        chargeCeiling: 0,
+        durationType: '',
+        durationTime: 0,
+        turnPrice: 0,
+        partitionFrameTime: 0,
+        partitionFramePrice: 0,
+        partitionIncreaseTime: 0,
+        partitionIncreasePrice: 0,
+      },
+      options: [
+        {
+          value: '选项1',
+          label: '小时'
+        },
+        {
+          value: '选项2',
+          label: '分钟'
+        }
+      ],
+      value: '',
+      radio: '1',
     }
   },
   mounted() {
@@ -68,6 +134,19 @@ export default {
     pageChange(page) {
       this.params.page = page
       this.getList()
+    },
+    closeDialog() {
+      this.dialogVisible = false
+    },
+    openDialog() {
+      this.dialogVisible = true
+    },
+    handleChange(val) {
+      console.log(val);
+
+    },
+    addRule() {
+
     },
     // 导出Excel逻辑
     async exportExcel() {
@@ -119,14 +198,17 @@ export default {
     margin-right: 10px;
   }
 }
-.create-container{
+
+.create-container {
   margin: 10px 0px;
 }
-.page-container{
-  padding:4px 0px;
+
+.page-container {
+  padding: 4px 0px;
   text-align: right;
 }
-.form-container{
-  padding:0px 80px;
+
+.form-container {
+  padding: 0px 80px;
 }
 </style>
